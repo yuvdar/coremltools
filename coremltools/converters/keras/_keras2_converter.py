@@ -70,7 +70,19 @@ if _HAS_KERAS2_TF:
         _keras.applications.mobilenet.DepthwiseConv2D:_layers2.convert_convolution,
 
     }
-    
+    try:
+        print("-------------------------------------------------")
+
+        from .conditional_instance_normalization import ConditionalInstanceNormalization
+
+        print ("HELLO")
+        _KERAS_LAYER_REGISTRY[ConditionalInstanceNormalization] = \
+            _layers2.convert_conditional_instance_normalization
+        print
+    except ImportError as err:
+        print(err)
+        print ("conditional instance normalization is not supported!")
+
 
 def _is_merge_layer(layer):
     for lt in _KERAS_MERGE_LAYERS:
@@ -79,6 +91,7 @@ def _is_merge_layer(layer):
     return False
 
 def _check_unsupported_layers(model):
+    print _KERAS_LAYER_REGISTRY.keys()
     for i, layer in enumerate(model.layers):
         if isinstance(layer, _keras.models.Sequential) or isinstance(layer, _keras.models.Model):
             _check_unsupported_layers(layer)

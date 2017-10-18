@@ -441,6 +441,46 @@ def convert_separable_convolution(builder, layer, input_names, output_names, ker
              output_name = output_name, 
              dilation_factors = [1,1])
 
+
+def convert_conditional_instance_normalization(builder, layer, input_names, output_names,
+                                               keras_layer):
+    """
+    Convert a Batch Normalization layer.
+
+    Parameters
+    keras_layer: layer
+        A keras layer object.
+
+    builder: NeuralNetworkBuilder
+        A neural network builder object.
+    """
+
+    # Get input and output names
+    input_name, output_name = (input_names[0], output_names[0])
+
+    axis = keras_layer.axis
+    nb_channels = keras_layer.input_shape[0][axis]
+
+    # Set parameters
+    # Parameter arrangement in Keras: gamma, beta
+
+    gamma = keras_layer.get_weights()[0]
+    beta = keras_layer.get_weights()[1]
+
+    builder.add_batchnorm(
+        name=layer,
+        channels=nb_channels,
+        gamma=gamma,
+        beta=beta,
+        mean=None,
+        variance=None,
+        input_name=input_name,
+        output_name=output_name,
+        compute_mean_var=True,
+        instance_normalization=True
+    )
+
+
 def convert_batchnorm(builder, layer, input_names, output_names, keras_layer):
     """
     Convert a Batch Normalization layer. 

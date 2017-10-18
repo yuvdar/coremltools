@@ -47,6 +47,14 @@ _KERAS_SKIP_LAYERS = [
     _keras.layers.core.SpatialDropout2D,
 ]
 
+
+try:
+    from conditional_instance_normalization import ConditionalInstanceNormalization
+    _KERAS_MERGE_LAYERS.append(ConditionalInstanceNormalization)
+except ImportError:
+    print("no support for conditional instance normalization")
+
+
 def _to_list(x):
     if type(x) is not list: 
         return [x]
